@@ -204,3 +204,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+/Foundry-Local
+FoundryLocal.msix

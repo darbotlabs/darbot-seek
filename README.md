@@ -45,7 +45,7 @@ For issues related to chrome driver, see the **Chromedriver** section.
 ### 1️⃣ **Clone the repository and setup**
 
 ```sh
-git clone https://github.com/Fosowl/agenticSeek.git
+git clone https://github.com/darbotlabs/darbot-seek.git
 cd agenticSeek
 mv .env.example .env
 ```

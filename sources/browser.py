@@ -1,10 +1,10 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.edge.service import Service
+from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.common.exceptions import TimeoutException, WebDriverException, ElementClickInterceptedException
 from selenium.webdriver.common.action_chains import ActionChains
 from typing import List, Tuple, Type, Dict
 from bs4 import BeautifulSoup
@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 from fake_useragent import UserAgent
 from selenium_stealth import stealth
 import undetected_chromedriver as uc
-import chromedriver_autoinstaller
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 import certifi
 import ssl
 import time
@@ -30,62 +30,73 @@ from sources.utility import pretty_print, animate_thinking
 from sources.logger import Logger
 
 
-def get_chrome_path() -> str:
-    """Get the path to the Chrome executable."""
+def get_edge_path() -> str:
+    """Get the path to the Microsoft Edge executable."""
     if sys.platform.startswith("win"):
         paths = [
-            "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-            "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-            os.path.join(os.environ.get("LOCALAPPDATA", ""), "Google\\Chrome\\Application\\chrome.exe")  # User install
+            "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+            "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
+            os.path.join(os.environ.get("LOCALAPPDATA", ""), "Microsoft\\Edge\\Application\\msedge.exe")  # User install
         ]
     elif sys.platform.startswith("darwin"):  # macOS
-        paths = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-                 "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta"]
+        paths = [
+            "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+            "/Applications/Microsoft Edge Beta.app/Contents/MacOS/Microsoft Edge Beta"
+        ]
     else:  # Linux
-        paths = ["/usr/bin/google-chrome", "/usr/bin/chromium-browser", "/usr/bin/chromium", "/opt/chrome/chrome", "/usr/local/bin/chrome"]
+        paths = [
+            "/usr/bin/microsoft-edge", 
+            "/usr/bin/microsoft-edge-stable", 
+            "/usr/bin/microsoft-edge-beta", 
+            "/usr/bin/microsoft-edge-dev", 
+            "/opt/microsoft/msedge/microsoft-edge"
+        ]
 
     for path in paths:
         if os.path.exists(path) and os.access(path, os.X_OK):
             return path
-    print("Looking for Google Chrome in these locations failed:")
+            
+    print("Looking for Microsoft Edge in these locations failed:")
     print('\n'.join(paths))
-    chrome_path_env = os.environ.get("CHROME_EXECUTABLE_PATH")
-    if chrome_path_env and os.path.exists(chrome_path_env) and os.access(chrome_path_env, os.X_OK):
-        return chrome_path_env
-    path = input("Google Chrome not found. Please enter the path to the Chrome executable: ")
+    
+    edge_path_env = os.environ.get("EDGE_EXECUTABLE_PATH")
+    if edge_path_env and os.path.exists(edge_path_env) and os.access(edge_path_env, os.X_OK):
+        return edge_path_env
+        
+    path = input("Microsoft Edge not found. Please enter the path to the Edge executable: ")
     if os.path.exists(path) and os.access(path, os.X_OK):
-        os.environ["CHROME_EXECUTABLE_PATH"] = path
-        print(f"Chrome path saved to environment variable CHROME_EXECUTABLE_PATH")
+        os.environ["EDGE_EXECUTABLE_PATH"] = path
+        print(f"Edge path saved to environment variable EDGE_EXECUTABLE_PATH")
         return path
+        
     return None
 
 def get_random_user_agent() -> str:
     """Get a random user agent string with associated vendor."""
     user_agents = [
-        {"ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36", "vendor": "Google Inc."},
-        {"ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36", "vendor": "Apple Inc."},
-        {"ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36", "vendor": "Google Inc."},
+        {"ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0", "vendor": "Microsoft Corporation"},
+        {"ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0", "vendor": "Microsoft Corporation"},
+        {"ua": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0", "vendor": "Microsoft Corporation"},
     ]
     return random.choice(user_agents)
 
-def install_chromedriver() -> str:
+def install_edgedriver() -> str:
     """
-    Install the ChromeDriver if not already installed. Return the path.
+    Install the EdgeDriver if not already installed. Return the path.
     """
-    chromedriver_path = shutil.which("chromedriver")
-    if not chromedriver_path:
+    edgedriver_path = shutil.which("msedgedriver")
+    if not edgedriver_path:
         try:
-            chromedriver_path = chromedriver_autoinstaller.install()
+            edgedriver_path = EdgeChromiumDriverManager().install()
         except Exception as e:
             raise FileNotFoundError(
-                "ChromeDriver not found and could not be installed automatically. "
-                "Please install it manually from https://chromedriver.chromium.org/downloads."
+                "EdgeDriver not found and could not be installed automatically. "
+                "Please install it manually from https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/"
                 "and ensure it's in your PATH or specify the path directly."
-                "See know issues in readme if your chrome version is above 115."
             ) from e
-    if not chromedriver_path:
-        raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
-    return chromedriver_path
+    if not edgedriver_path:
+        raise FileNotFoundError("EdgeDriver not found. Please install it or add it to your PATH.")
+    return edgedriver_path
 
 def bypass_ssl() -> str:
     """
@@ -94,72 +105,65 @@ def bypass_ssl() -> str:
     pretty_print("Bypassing SSL verification issues, we strongly advice you update your certifi SSL certificate.", color="warning")
     ssl._create_default_https_context = ssl._create_unverified_context
 
-def create_undetected_chromedriver(service, chrome_options) -> webdriver.Chrome:
-    """Create an undetected ChromeDriver instance."""
+def create_undetected_edgedriver(service, edge_options) -> webdriver.Edge:
+    """Create an undetected EdgeDriver instance using Chrome options compatibility."""
     try:
-        driver = uc.Chrome(service=service, options=chrome_options)
+        # Note: undetected_chromedriver doesn't directly support Edge, 
+        # so we'll use regular Edge driver with stealth configurations
+        driver = webdriver.Edge(service=service, options=edge_options)
     except Exception as e:
-        pretty_print(f"Failed to create Chrome driver: {str(e)}. Trying to bypass SSL...", color="failure")
+        pretty_print(f"Failed to create Edge driver: {str(e)}. Trying to bypass SSL...", color="failure")
         try:
             bypass_ssl()
-            driver = uc.Chrome(service=service, options=chrome_options)
+            driver = webdriver.Edge(service=service, options=edge_options)
         except Exception as e:
-            pretty_print(f"Failed to create Chrome driver, fallback failed:\n{str(e)}.", color="failure")
+            pretty_print(f"Failed to create Edge driver, fallback failed:\n{str(e)}.", color="failure")
             raise e
-        raise e
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})") 
     return driver
 
-def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx", lang="en") -> webdriver.Chrome:
-    """Create a Chrome WebDriver with specified options."""
-    chrome_options = Options()
-    chrome_path = get_chrome_path()
+def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx", lang="en") -> webdriver.Edge:
+    """Create an Edge WebDriver with specified options."""
+    edge_options = Options()
+    edge_path = get_edge_path()
     
-    if not chrome_path:
-        raise FileNotFoundError("Google Chrome not found. Please install it.")
-    chrome_options.binary_location = chrome_path
+    if not edge_path:
+        raise FileNotFoundError("Microsoft Edge not found. Please install it.")
+    edge_options.binary_location = edge_path
     
     if headless:
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--disable-webgl")
+        edge_options.add_argument("--headless")
+        edge_options.add_argument("--disable-gpu")
+        edge_options.add_argument("--disable-webgl")
     user_data_dir = tempfile.mkdtemp()
     user_agent = get_random_user_agent()
     width, height = (1920, 1080)
-    chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
-    chrome_options.add_argument(f"--accept-lang={lang}-{lang.upper()},{lang};q=0.9")
-    chrome_options.add_argument("--timezone=Europe/Paris")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--mute-audio")
-    chrome_options.add_argument("--disable-notifications")
-    chrome_options.add_argument("--autoplay-policy=user-gesture-required")
-    chrome_options.add_argument("--disable-features=SitePerProcess,IsolateOrigins")
-    chrome_options.add_argument("--enable-features=NetworkService,NetworkServiceInProcess")
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-    chrome_options.add_argument(f'user-agent={user_agent["ua"]}')
-    chrome_options.add_argument(f'--window-size={width},{height}')
+    edge_options.add_argument(f"--user-data-dir={user_data_dir}")
+    edge_options.add_argument(f"--accept-lang={lang}-{lang.upper()},{lang};q=0.9")
+    edge_options.add_argument("--timezone=Europe/Paris")
+    edge_options.add_argument("--no-sandbox")
+    edge_options.add_argument("--disable-dev-shm-usage")
+    edge_options.add_argument("--mute-audio")
+    edge_options.add_argument("--disable-notifications")
+    edge_options.add_argument("--autoplay-policy=user-gesture-required")
+    edge_options.add_argument("--disable-features=SitePerProcess,IsolateOrigins")
+    edge_options.add_argument("--enable-features=NetworkService,NetworkServiceInProcess")
+    edge_options.add_argument("--disable-blink-features=AutomationControlled")
+    edge_options.add_argument(f'user-agent={user_agent["ua"]}')
+    edge_options.add_argument(f'--window-size={width},{height}')
     if not stealth_mode:
         if not os.path.exists(crx_path):
             pretty_print(f"Anti-captcha CRX not found at {crx_path}.", color="failure")
         else:
-            chrome_options.add_extension(crx_path)
+            edge_options.add_extension(crx_path)
 
-    chromedriver_path = install_chromedriver()
-
-    service = Service(chromedriver_path)
+    edgedriver_path = install_edgedriver()
+    service = Service(edgedriver_path)
     if stealth_mode:
-        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-        driver = create_undetected_chromedriver(service, chrome_options)
-        chrome_version = driver.capabilities['browserVersion']
-        stealth(driver,
-            languages=["en-US", "en"],
-            vendor=user_agent["vendor"],
-            platform="Win64" if "windows" in user_agent["ua"].lower() else "MacIntel" if "mac" in user_agent["ua"].lower() else "Linux x86_64",
-            webgl_vendor="Intel Inc.",
-            renderer="Intel Iris OpenGL Engine",
-            fix_hairline=True,
-        )
+        # Note: selenium_stealth does not support Edge, so we skip the stealth() call for Edge
+        driver = create_undetected_edgedriver(service, edge_options)
+        # edge_version = driver.capabilities['browserVersion']
+        # The following stealth() call is intentionally omitted for Edge
         return driver
     security_prefs = {
         "profile.default_content_setting_values.geolocation": 0,
@@ -181,16 +185,16 @@ def create_driver(headless=False, stealth_mode=True, crx_path="./crx/nopecha.crx
         "enable_webgl": True,
         "enable_webgl2_compute_context": True
     }
-    chrome_options.add_experimental_option("prefs", security_prefs)
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option('useAutomationExtension', False)
-    return webdriver.Chrome(service=service, options=chrome_options)
+    edge_options.add_experimental_option("prefs", security_prefs)
+    edge_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    edge_options.add_experimental_option('useAutomationExtension', False)
+    return webdriver.Edge(service=service, options=edge_options)
 
 class Browser:
     def __init__(self, driver, anticaptcha_manual_install=False):
         """Initialize the browser with optional AntiCaptcha installation."""
         self.js_scripts_folder = "./sources/web_scripts/" if not __name__ == "__main__" else "./web_scripts/"
-        self.anticaptcha = "https://chrome.google.com/webstore/detail/nopecha-captcha-solver/dknlfmjaanfblgfdfebhijalfmhmjjjo/related"
+        self.anticaptcha = "https://microsoftedge.microsoft.com/addons/detail/nopecha-captcha-solver/abookmkklleefempklookplkhpjaaonh"
         self.logger = Logger("browser.log")
         self.screenshot_folder = os.path.join(os.getcwd(), ".screenshots")
         self.tabs = []

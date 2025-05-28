@@ -1,0 +1,12 @@
+G:\Github\new\darbot-seek\FoundryFix\bin\Debug\net7.0\FoundryFix.deps.json
+G:\Github\new\darbot-seek\FoundryFix\bin\Debug\net7.0\FoundryFix.dll
+G:\Github\new\darbot-seek\FoundryFix\bin\Debug\net7.0\FoundryFix.pdb
+G:\Github\new\darbot-seek\FoundryFix\obj\Debug\net7.0\FoundryFix.GeneratedMSBuildEditorConfig.editorconfig
+G:\Github\new\darbot-seek\FoundryFix\obj\Debug\net7.0\FoundryFix.AssemblyInfoInputs.cache
+G:\Github\new\darbot-seek\FoundryFix\obj\Debug\net7.0\FoundryFix.AssemblyInfo.cs
+G:\Github\new\darbot-seek\FoundryFix\obj\Debug\net7.0\FoundryFix.csproj.CoreCompileInputs.cache
+G:\Github\new\darbot-seek\FoundryFix\obj\Debug\net7.0\FoundryFix.sourcelink.json
+G:\Github\new\darbot-seek\FoundryFix\obj\Debug\net7.0\FoundryFix.dll
+G:\Github\new\darbot-seek\FoundryFix\obj\Debug\net7.0\refint\FoundryFix.dll
+G:\Github\new\darbot-seek\FoundryFix\obj\Debug\net7.0\FoundryFix.pdb
+G:\Github\new\darbot-seek\FoundryFix\obj\Debug\net7.0\ref\FoundryFix.dll

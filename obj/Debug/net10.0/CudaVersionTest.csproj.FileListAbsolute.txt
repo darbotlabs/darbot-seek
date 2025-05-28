@@ -1,0 +1,15 @@
+G:\Github\new\darbot-seek\bin\Debug\net10.0\CudaVersionTest.exe
+G:\Github\new\darbot-seek\bin\Debug\net10.0\CudaVersionTest.deps.json
+G:\Github\new\darbot-seek\bin\Debug\net10.0\CudaVersionTest.runtimeconfig.json
+G:\Github\new\darbot-seek\bin\Debug\net10.0\CudaVersionTest.dll
+G:\Github\new\darbot-seek\bin\Debug\net10.0\CudaVersionTest.pdb
+G:\Github\new\darbot-seek\obj\Debug\net10.0\CudaVersionTest.GeneratedMSBuildEditorConfig.editorconfig
+G:\Github\new\darbot-seek\obj\Debug\net10.0\CudaVersionTest.AssemblyInfoInputs.cache
+G:\Github\new\darbot-seek\obj\Debug\net10.0\CudaVersionTest.AssemblyInfo.cs
+G:\Github\new\darbot-seek\obj\Debug\net10.0\CudaVersionTest.csproj.CoreCompileInputs.cache
+G:\Github\new\darbot-seek\obj\Debug\net10.0\CudaVersionTest.sourcelink.json
+G:\Github\new\darbot-seek\obj\Debug\net10.0\CudaVersionTest.dll
+G:\Github\new\darbot-seek\obj\Debug\net10.0\refint\CudaVersionTest.dll
+G:\Github\new\darbot-seek\obj\Debug\net10.0\CudaVersionTest.pdb
+G:\Github\new\darbot-seek\obj\Debug\net10.0\CudaVersionTest.genruntimeconfig.cache
+G:\Github\new\darbot-seek\obj\Debug\net10.0\ref\CudaVersionTest.dll

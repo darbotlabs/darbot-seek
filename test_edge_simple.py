@@ -1,0 +1,1 @@
+from sources.browser import create_driver; driver = create_driver(headless=True, stealth_mode=False); print('Driver created successfully'); driver.get('https://www.example.com'); print(f'Page title: {driver.title}'); driver.quit(); print('Test completed')
