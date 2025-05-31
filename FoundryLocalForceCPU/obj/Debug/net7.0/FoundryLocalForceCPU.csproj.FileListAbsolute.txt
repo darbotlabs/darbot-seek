@@ -1,0 +1,15 @@
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/bin/Debug/net7.0/FoundryLocalForceCPU
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/bin/Debug/net7.0/FoundryLocalForceCPU.deps.json
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/bin/Debug/net7.0/FoundryLocalForceCPU.runtimeconfig.json
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/bin/Debug/net7.0/FoundryLocalForceCPU.dll
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/bin/Debug/net7.0/FoundryLocalForceCPU.pdb
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/FoundryLocalForceCPU.GeneratedMSBuildEditorConfig.editorconfig
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/FoundryLocalForceCPU.AssemblyInfoInputs.cache
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/FoundryLocalForceCPU.AssemblyInfo.cs
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/FoundryLocalForceCPU.csproj.CoreCompileInputs.cache
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/FoundryLocalForceCPU.sourcelink.json
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/FoundryLocalForceCPU.dll
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/refint/FoundryLocalForceCPU.dll
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/FoundryLocalForceCPU.pdb
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/FoundryLocalForceCPU.genruntimeconfig.cache
+/home/runner/work/darbot-seek/darbot-seek/FoundryLocalForceCPU/obj/Debug/net7.0/ref/FoundryLocalForceCPU.dll
