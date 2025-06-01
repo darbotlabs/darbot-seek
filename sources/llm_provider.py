@@ -33,6 +33,7 @@ class Provider:
             "together": self.together_fn,
             "dsk_deepseek": self.dsk_deepseek,
             "openrouter": self.openrouter_fn,
+            "foundry": self.foundry_fn,
             "test": self.test_fn
         }
         self.logger = Logger("provider.log")
@@ -404,6 +405,92 @@ class Provider:
         except APIError as e:
             raise APIError(f"API error occurred: {str(e)}") from e
         return None
+
+    def foundry_fn(self, history, verbose=False):
+        """
+        Use Microsoft Foundry Local to generate text.
+        This provider interfaces with the Foundry Local CLI.
+        """
+        import json
+        
+        try:
+            # Convert history to Foundry format
+            messages = []
+            for msg in history:
+                if isinstance(msg, dict):
+                    messages.append(msg)
+                elif isinstance(msg, list) and len(msg) == 2:
+                    role, content = msg
+                    messages.append({"role": role, "content": content})
+                else:
+                    # Handle other formats
+                    messages.append({"role": "user", "content": str(msg)})
+            
+            # Create a temporary file with the messages
+            import tempfile
+            import subprocess
+            import os
+            
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+                json.dump({"messages": messages}, f)
+                temp_file = f.name
+            
+            try:
+                # Set environment variables to work around CUDA issues
+                env = os.environ.copy()
+                env.update({
+                    "FOUNDRY_EXECUTION_PROVIDER": "CPUExecutionProvider",
+                    "CUDA_VISIBLE_DEVICES": "-1",
+                    "FOUNDRY_SKIP_CUDA_CHECK": "1",
+                    "FOUNDRY_CUDA_VERSION_OVERRIDE": "12.0.0",
+                    "CUDA_VERSION": "12.0.0"
+                })
+                
+                # Run foundry command with CPU-only mode
+                result = subprocess.run([
+                    "foundry", "chat", 
+                    "--model", self.model,
+                    "--input", temp_file
+                ], 
+                capture_output=True, 
+                text=True,
+                env=env,
+                timeout=300  # 5 minute timeout
+                )
+                
+                if result.returncode != 0:
+                    # If foundry command fails, try with the FoundryLocalForceCPU wrapper
+                    foundry_cpu_exe = os.path.join(os.path.dirname(__file__), "..", "FoundryLocalForceCPU", "bin", "Debug", "net8.0", "FoundryLocalForceCPU")
+                    if os.path.exists(foundry_cpu_exe):
+                        result = subprocess.run([
+                            "dotnet", foundry_cpu_exe,
+                            "chat", "--model", self.model, "--input", temp_file
+                        ], 
+                        capture_output=True, 
+                        text=True,
+                        timeout=300
+                        )
+                    
+                    if result.returncode != 0:
+                        raise Exception(f"Foundry Local command failed: {result.stderr}")
+                
+                response = result.stdout.strip()
+                if verbose:
+                    print(response, end="", flush=True)
+                
+                return response
+                
+            finally:
+                # Clean up temporary file
+                if os.path.exists(temp_file):
+                    os.unlink(temp_file)
+                    
+        except subprocess.TimeoutExpired:
+            raise Exception("Foundry Local request timed out")
+        except FileNotFoundError:
+            raise Exception("Foundry Local CLI not found. Please ensure it's installed and in PATH.")
+        except Exception as e:
+            raise Exception(f"Foundry Local provider failed: {str(e)}") from e
 
     def test_fn(self, history, verbose=True):
         """

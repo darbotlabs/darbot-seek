@@ -206,3 +206,16 @@ cython_debug/
 .pypirc
 /Foundry-Local
 FoundryLocal.msix
+
+# .NET / C# build artifacts
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+!*.md
+!*.cs
+!*.csproj
+!foundry_validation.py
+!test_foundry_provider_simple.py
+!config_foundry_example.ini
