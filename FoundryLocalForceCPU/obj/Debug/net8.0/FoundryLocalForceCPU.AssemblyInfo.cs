@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FoundryLocalForceCPU")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae03e4c199ee86963f8fe9af9151ec9c0303a6ee")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f29f7b238cd54fa695d1cf9d7d54c5ba55e05e43")]
 [assembly: System.Reflection.AssemblyProductAttribute("FoundryLocalForceCPU")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FoundryLocalForceCPU")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
