@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FoundryFix")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0586443fd582a14670a73546836496acb93d1f95")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f29f7b238cd54fa695d1cf9d7d54c5ba55e05e43")]
 [assembly: System.Reflection.AssemblyProductAttribute("FoundryFix")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FoundryFix")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
